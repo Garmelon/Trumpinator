@@ -15,17 +15,17 @@ class Markov:
 		before = ""
 		
 		for char in line:
-			if not before in self.matrix: self.matrix[before] = {}
-			if not char in self.matrix[before]: self.matrix[before][char] = 0
+			if before not in self.matrix: self.matrix[before] = {}
+			if char not in self.matrix[before]: self.matrix[before][char] = 0
 			self.matrix[before][char] += 1
 			before = (before + char)[-self.before:]
 		
-		if not before in self.matrix: self.matrix[before] = {}
-		if not "" in self.matrix[before]: self.matrix[before][""] = 0
+		if before not in self.matrix: self.matrix[before] = {}
+		if "" not in self.matrix[before]: self.matrix[before][""] = 0
 		self.matrix[before][""] += 1
 	
 	def hiccup(self, before):
-		if not before in self.matrix:
+		if before not in self.matrix:
 			before = random.choice(self.matrix.keys())
 		
 		selection = self.matrix[before]
@@ -71,12 +71,12 @@ def main(filename, paragraphs, char_lookback):
 if __name__ == "__main__":
 	try:
 		paragraphs = int(sys.argv[1])
-	except:
+	except (IndexError, ValueError):
 		paragraphs = 1
 	
 	try:
 		char_lookback = int(sys.argv[2])
-	except:
+	except (IndexError, ValueError):
 		char_lookback = 10
 	
 	main("trump_speech.txt", paragraphs, char_lookback)
