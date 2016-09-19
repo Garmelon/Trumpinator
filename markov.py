@@ -26,7 +26,7 @@ class Markov:
 	
 	def hiccup(self, before):
 		if before not in self.matrix:
-			before = random.choice(self.matrix.keys())
+			before = random.choice(list(self.matrix))
 		
 		selection = self.matrix[before]
 		choice = random.randrange(sum(selection.values()))
@@ -37,9 +37,7 @@ class Markov:
 			if choice < counter:
 				return char
 	
-	def regurgitate_line(self):
-		line = ""
-		
+	def regurgitate_line(self, line=""):
 		while True:
 			before = line[-self.before:]
 			char = self.hiccup(before)
@@ -50,15 +48,24 @@ class Markov:
 			else:
 				line += char
 	
-	def regurgitate(self, lines=1):
+	# set start if you want to have the lines start with a particular word/string
+	def regurgitate(self, lines=1, start=""):
 		speech = ""
 		
 		for i in range(lines):
-			speech += self.regurgitate_line()
+			speech += self.regurgitate_line(line=start)
 		
 		return speech
+	
+	def save(self, filename):
+		with open(filename, "w") as f:
+			json.dump(self.matrix, f)
+	
+	def load(self, filename):
+		with open(filename) as f:
+			self.matrix = json.load(f)
 
-def main(filename, paragraphs, char_lookback):
+def main(filename, paragraphs=1, char_lookback=10, start=""):
 	markov = Markov(char_lookback)
 	markov.feed(filename)
 	
@@ -66,7 +73,7 @@ def main(filename, paragraphs, char_lookback):
 	print("Entries:", len(markov.matrix))
 	
 	print("Regurgitating!")
-	print(markov.regurgitate(paragraphs))
+	print(markov.regurgitate(paragraphs, start))
 
 if __name__ == "__main__":
 	try:
@@ -79,4 +86,9 @@ if __name__ == "__main__":
 	except (IndexError, ValueError):
 		char_lookback = 10
 	
-	main("trump_speech.txt", paragraphs, char_lookback)
+	try:
+		start = sys.argv[3]
+	except IndexError:
+		start = ""
+	
+	main("trump_speech.txt", paragraphs, char_lookback, start)
