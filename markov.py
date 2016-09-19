@@ -1,4 +1,5 @@
 import sys
+import json
 import random
 
 class Markov:
@@ -29,6 +30,7 @@ class Markov:
 			before = random.choice(list(self.matrix))
 		
 		selection = self.matrix[before]
+		print(repr(before), repr(selection))
 		choice = random.randrange(sum(selection.values()))
 		
 		counter = 0
